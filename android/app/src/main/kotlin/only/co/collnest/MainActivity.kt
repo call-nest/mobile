@@ -1,4 +1,4 @@
-package only.co.defaults
+package only.co.collnest
 
 import io.flutter.embedding.android.FlutterActivity
 

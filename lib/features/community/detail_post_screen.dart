@@ -1,9 +1,10 @@
+import 'package:defaults/features/community/models/collaboration.dart';
 import 'package:defaults/features/community/viewmodels/post_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class DetailPostScreen extends StatelessWidget {
+class DetailPostScreen extends StatefulWidget {
   static const String routeUrl = '/detailPost';
   static const routeName = "detailPost";
 
@@ -11,30 +12,44 @@ class DetailPostScreen extends StatelessWidget {
 
   const DetailPostScreen({super.key, required this.postId});
 
-  Future<bool> _compareUserId(int userId, BuildContext context) async {
+  @override
+  State<DetailPostScreen> createState() => _DetailPostScreenState();
+}
+
+class _DetailPostScreenState extends State<DetailPostScreen> {
+  late int myUserId;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeUserIdAndFetchData();
+  }
+
+  Future<void> _initializeUserIdAndFetchData() async {
     final prefs = await SharedPreferences.getInstance();
-    final myUserId = prefs.getInt("userId");
+    myUserId = prefs.getInt("userId")!;
+
+    final viewModel = Provider.of<PostViewModel>(context, listen: false);
+    await viewModel.getDetailPosts(widget.postId);
+    await viewModel.postCollaboration(widget.postId, myUserId);
+  }
+
+  Future<bool> _compareUserId(int userId) async {
     return myUserId == userId;
   }
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = Provider.of<PostViewModel>(context, listen: false);
-    viewModel.getDetailPosts(postId);
-    final post = viewModel.detailPosts;
     return Scaffold(
       appBar: AppBar(
         title: const Text("Detail Post"),
       ),
-      body: FutureBuilder(
-        future: viewModel.getDetailPosts(postId),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else {
-            return Padding(
+      body: Consumer<PostViewModel>(
+        builder: (context, viewModel, child) {
+          final post = viewModel.detailPosts;
+
+          return SingleChildScrollView(
+            child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Card(
                 shape: RoundedRectangleBorder(
@@ -44,33 +59,41 @@ class DetailPostScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     ListTile(
-                      leading: Container(
-                        width: 50,
-                        height: 50,
-                        child: CircleAvatar(
-                          backgroundImage:
-                              Image.network("https://picsum.photos/200/300")
-                                  .image,
-                        ),
+                      leading: CircleAvatar(
+                        backgroundImage:
+                            Image.network("https://picsum.photos/200/300")
+                                .image,
+                        radius: 25,
                       ),
-                      trailing: FutureBuilder(
-                        future: _compareUserId(post.writer, context),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const CircularProgressIndicator();
-                          } else {
-                            if (snapshot.data == true) {
-                              return IconButton(
-                                icon: const Icon(Icons.more_horiz_rounded),
-                                onPressed: () {},
-                              );
-                            } else {
-                              return const SizedBox();
-                            }
-                          }
-                        },
-                      ),
+                      trailing: _compareUserId(myUserId) == true
+                          ? IconButton(
+                              icon: const Icon(Icons.more_horiz_rounded),
+                              onPressed: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  builder: (context) {
+                                    return Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        ListTile(
+                                          title: const Text("수정하기"),
+                                          onTap: () {
+                                            // 수정 로직
+                                          },
+                                        ),
+                                        ListTile(
+                                          title: const Text("삭제하기"),
+                                          onTap: () {
+                                            // 삭제 로직
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                            )
+                          : SizedBox(),
                       title: Text(post.writerNickname),
                       subtitle: Text(post.createdAt.substring(0, 10)),
                       contentPadding: const EdgeInsets.all(10.0),
@@ -89,36 +112,31 @@ class DetailPostScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       child: Text(post.content),
                     ),
-                    FutureBuilder(
-                        future: _compareUserId(post.writer, context),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const CircularProgressIndicator();
-                          } else {
-                            if (snapshot.data == false) {
-                              return Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  TextButton(
-                                    onPressed: () {},
-                                    child: const Text("협업 신청하기"),
-                                  ),
-                                  IconButton(
-                                      onPressed: () {},
-                                      icon: const Icon(Icons.favorite_border)),
-                                ],
-                              );
-                            } else {
-                              return const SizedBox();
-                            }
-                          }
-                        }),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            viewModel.postCollaboration(
+                                widget.postId, myUserId);
+                          },
+                          child: Text(viewModel.collaboration?.collaboration.status == 0
+                              ? "협업 신청하기"
+                              : "협업 신청 취소하기"),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            // 좋아요 로직
+                          },
+                          icon: const Icon(Icons.favorite_border),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
-            );
-          }
+            ),
+          );
         },
       ),
     );

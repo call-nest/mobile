@@ -12,7 +12,9 @@ import 'package:defaults/features/community/detail_post_screen.dart';
 import 'package:defaults/features/community/search_screen.dart';
 import 'package:defaults/features/community/write_post_screen.dart';
 import 'package:defaults/features/home/home_item_screen.dart';
-import 'package:defaults/features/home/show_youtube_screen.dart';
+import 'package:defaults/features/home/post_complete_screen.dart';
+import 'package:defaults/features/home/detail_home_screen.dart';
+import 'package:defaults/features/management/management_screen.dart';
 import 'package:defaults/features/profile/user_modify_profile_screen.dart';
 import 'package:defaults/features/settings/settings_screen.dart';
 import 'package:go_router/go_router.dart';
@@ -82,29 +84,39 @@ final router = GoRouter(initialLocation: SplashScreen.routeUrl, routes: [
         final postId = state.extra as Map<String, int>;
         return DetailPostScreen(postId: postId["postId"]!);
       }),
+  GoRoute(
+      path: HomeItemScreen.routeUrl,
+      name: HomeItemScreen.routeName,
+      builder: (context, state) {
+        final post = state.extra as Map<String, String>;
+        return HomeItemScreen(
+            writer: post["writer"]!,
+            title: post["title"]!,
+            content: post["content"],
+            date: post["date"]!);
+      }),
+  GoRoute(
+      path: DetailHomeScreen.routeUrl,
+      name: DetailHomeScreen.routeName,
+      builder: (context, state) {
+        final post = state.extra as Map<String, String?>;
+        return DetailHomeScreen(
+          userId: post["userId"]!,
+          title: post["title"]!,
+          content: post["content"]!,
+          createdAt: post["createdAt"]!,
+          profile: post["profile"]!,
+          fileUrl: post["fileUrl"],
+        );
+      }),
+  GoRoute(
+      path: PostCompleteScreen.routeUrl,
+      name: PostCompleteScreen.routeName,
+      builder: (context, state) => const PostCompleteScreen()),
 
-  GoRoute(path: HomeItemScreen.routeUrl,
-  name : HomeItemScreen.routeName,
-  builder: (context, state){
-    final post = state.extra as Map<String, String>;
-    return HomeItemScreen(
-      writer: post["writer"]!,
-      title: post["title"]!,
-      content: post["content"]!,
-      date: post["date"]!
-    );
-  }),
-
-  GoRoute(path: ShowYoutubeScreen.routeUrl, name: ShowYoutubeScreen.routeName,
-  builder: (context, state){
-    final post = state.extra as Map<String, String>;
-    return ShowYoutubeScreen(
-      writer: post["writer"]!,
-      title: post["title"]!,
-      content: post["content"]!,
-      youtubeUrl: post["youtubeUrl"]!,
-      createdAt: post["createdAt"]!,
-      profile: post["profile"]!
-    );
-  }),
+  GoRoute(
+    path: ManagementScreen.routeUrl,
+    name: ManagementScreen.routeName,
+    builder: (context, state) => const ManagementScreen(),
+  )
 ]);

@@ -57,5 +57,8 @@
     <key>NSPhotoLibraryAddUsageDescription</key>
     <string>We need access to the photo library to save pictures.</string>
 
+    <key>FirebaseAppDelegateProxyEnabled</key>
+    <false/>
+
 </dict>
 </plist>

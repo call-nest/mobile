@@ -2,6 +2,7 @@ import 'package:defaults/features/community/models/detail_posts.dart';
 import 'package:defaults/features/community/widgets/posts_widget.dart';
 import 'package:flutter/cupertino.dart';
 
+import '../models/collaboration.dart';
 import '../models/posts.dart';
 import '../repository/post_repository.dart';
 
@@ -18,6 +19,9 @@ class PostViewModel extends ChangeNotifier {
 
   bool _hasMore = true;
   bool get hasMore => _hasMore;
+
+  Collaboration? _collaboration;
+  Collaboration? get collaboration => _collaboration;
 
   Future<void> getPosts(int page) async {
     try{
@@ -41,6 +45,15 @@ class PostViewModel extends ChangeNotifier {
       notifyListeners();
     } catch(e){
       throw Exception('Failed to load posts, status code: ${e}');
+    }
+  }
+
+  Future<void> postCollaboration(int postId, int userId) async{
+    try{
+      _collaboration = await postRepository.postCollaboration(postId, userId);
+      notifyListeners();
+    }catch (e){
+      throw Exception('Failed to post collaboration, status code: ${e}');
     }
   }
 }

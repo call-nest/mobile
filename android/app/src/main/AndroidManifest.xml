@@ -17,8 +17,12 @@
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
 
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
+    <permission android:name="${applicationName}.permission.C2D_MESSAGE"
+        android:protectionLevel="signature"/>
+    <uses-permission android:name="${applicationName}.permission.C2D_MESSAGE"/>
     <application
-        android:label="defaults"
+        android:label="collnest"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:showWhenLocked="true"

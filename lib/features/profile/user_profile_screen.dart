@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:defaults/features/management/management_screen.dart';
 import 'package:defaults/features/profile/models/user_info.dart';
 import 'package:defaults/features/profile/models/user_interests.dart';
 import 'package:defaults/features/profile/user_modify_profile_screen.dart';
@@ -26,23 +27,26 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   List<String> interests = [];
   String? introduce = "";
   String? profile = "";
+  int userRole = 0;
 
   late UserViewModel viewModel;
-
 
   Future<void> _getUserInfo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int userId = prefs.getInt("userId")!;
     UserInfo userInfo = await viewModel.getUserInfo(userId);
     userName = userInfo.data.user.nickname;
+    profile = userInfo.data.user.profile;
     introduce = userInfo.data.user.introduce == null
         ? "자신을 알려주기 위해 자기 소개를 작성해주세요."
         : userInfo.data.user.introduce;
+
     UserInterests userInterests = await viewModel.getUserInterests(userId);
     interests = userInterests.data.interests;
+    userRole = userInfo.data.user.role;
   }
 
-  Future<void> _getUserPosts() async{
+  Future<void> _getUserPosts() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int userId = prefs.getInt("userId")!;
     await viewModel.getUserPosts(userId);
@@ -61,11 +65,10 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if(!mounted) return;
-      viewModel = Provider.of<UserViewModel>(context, listen: false);
-      _getUserInfo();
-      _getUserPosts();
-
+    if (!mounted) return;
+    viewModel = Provider.of<UserViewModel>(context, listen: false);
+    _getUserInfo();
+    _getUserPosts();
   }
 
   @override
@@ -92,15 +95,26 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                           context.push(SettingsScreen.routeUrl);
                         },
                       ),
+                      if (userRole == 1)
+                        IconButton(
+                          icon: FaIcon(FontAwesomeIcons.userShield, size: 20),
+                          onPressed: () {
+                            context.push(ManagementScreen.routeUrl);
+                          },
+                        ),
                     ],
                   ),
                   SliverToBoxAdapter(
                     child: Column(
                       children: [
                         Container(
+                          width: 100,
+                          height: 100,
                           margin: EdgeInsets.only(top: 20),
                           alignment: Alignment.center,
-                          child: FaIcon(FontAwesomeIcons.circleUser, size: 100),
+                          child: CircleAvatar(
+                            backgroundImage: NetworkImage(profile!),
+                          ),
                         ),
                         SizedBox(height: 20),
                         Text(
@@ -147,7 +161,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                     Text(
                                       "0",
                                       style: TextStyle(
-                                          fontSize: 20, fontWeight: FontWeight.bold),
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold),
                                     )
                                   ],
                                 ),
@@ -170,7 +185,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                     Text(
                                       "10",
                                       style: TextStyle(
-                                          fontSize: 20, fontWeight: FontWeight.bold),
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold),
                                     )
                                   ],
                                 ),
@@ -193,7 +209,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                     Text(
                                       "5",
                                       style: TextStyle(
-                                          fontSize: 20, fontWeight: FontWeight.bold),
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold),
                                     )
                                   ],
                                 ),
@@ -266,9 +283,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                       );
                     }),
                 Consumer<UserViewModel>(
-                  builder: (context, viewModel, child){
-                    if(viewModel.userPosts?.data.isEmpty ?? true){
-                      return Center(child: Text("게시물이 없습니다."),);
+                  builder: (context, viewModel, child) {
+                    if (viewModel.userPosts?.data.isEmpty ?? true) {
+                      return Center(
+                        child: Text("게시물이 없습니다."),
+                      );
                     }
                     return GridView.builder(
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

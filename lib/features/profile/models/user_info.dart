@@ -50,6 +50,7 @@ class User {
   String nickname;
   String? profile;
   String? introduce;
+  int role;
 
   User({
     required this.id,
@@ -57,6 +58,7 @@ class User {
     required this.nickname,
     this.profile = "",
     this.introduce = "",
+    required this.role,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => User(
@@ -65,6 +67,7 @@ class User {
     nickname: json["nickname"],
     profile: json["profile_img"],
     introduce: json["introduce"],
+    role: json["role"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -73,5 +76,6 @@ class User {
     "nickname": nickname,
     "profile_img": profile,
     "introduce": introduce,
+    "role": role,
   };
 }

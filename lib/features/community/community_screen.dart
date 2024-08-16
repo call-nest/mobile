@@ -129,6 +129,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
         },
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'community',
         onPressed: () => _goToWritePost(),
         child: FaIcon(FontAwesomeIcons.penNib),
       ),

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "419853346326",
+    "project_id": "collnest",
+    "storage_bucket": "collnest.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:419853346326:android:4a714ab02f6e9b668c3737",
+        "android_client_info": {
+          "package_name": "only.co.collnest"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBuEMiep9xuR8LWq9QY-z2hV7kmOKdmtl8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:419853346326:android:6d7b3d31fdcfd51c8c3737",
+        "android_client_info": {
+          "package_name": "only.co.collnest"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBuEMiep9xuR8LWq9QY-z2hV7kmOKdmtl8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
