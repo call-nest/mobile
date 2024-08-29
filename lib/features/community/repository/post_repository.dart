@@ -70,4 +70,29 @@ class PostRepository {
       throw Exception('Failed to post collaboration, status code: ${e}');
     }
   }
+
+  Future<Datum> writePost(
+      int userId, String title, String content, String category) async {
+    final url = "${Constants.baseUrl}posts/create";
+    try {
+      final response = await _dio.post(url,
+          data: json.encode({
+            "writer": userId,
+            "title": title,
+            "content": content,
+            "category": category
+          }),
+          options: Options(headers: {"Content-Type": "application/json"}));
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonResponse = response.data;
+        final Datum posts = Datum.fromJson(jsonResponse);
+        return posts;
+      } else {
+        throw Exception(
+            'Failed to load posts, status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to load posts, status code: ${e}');
+    }
+  }
 }

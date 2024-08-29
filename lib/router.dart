@@ -7,6 +7,7 @@ import 'package:defaults/features/authentication/login_screen.dart';
 import 'package:defaults/features/authentication/signup_screen.dart';
 import 'package:defaults/features/authentication/tutorial_screen.dart';
 import 'package:defaults/features/chatting/chatting_screen.dart';
+import 'package:defaults/features/chatting/detail_chatting_screen.dart';
 import 'package:defaults/features/collaboration/collaboration_screen.dart';
 import 'package:defaults/features/community/detail_post_screen.dart';
 import 'package:defaults/features/community/search_screen.dart';
@@ -16,6 +17,7 @@ import 'package:defaults/features/home/post_complete_screen.dart';
 import 'package:defaults/features/home/detail_home_screen.dart';
 import 'package:defaults/features/management/management_screen.dart';
 import 'package:defaults/features/profile/user_modify_profile_screen.dart';
+import 'package:defaults/features/profile/user_profile_screen.dart';
 import 'package:defaults/features/settings/settings_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -50,6 +52,14 @@ final router = GoRouter(initialLocation: SplashScreen.routeUrl, routes: [
     },
   ),
   GoRoute(
+    path : "/userProfile/:userId",
+    name : UserProfileScreen.routeName,
+    builder: (context, state){
+      final userId = state.pathParameters["userId"];
+      return UserProfileScreen(userId: int.parse(userId!));
+    }
+  ),
+  GoRoute(
       path: UserModifyProfileScreen.routeUrl,
       name: UserModifyProfileScreen.routeName,
       builder: (context, state) {
@@ -76,13 +86,17 @@ final router = GoRouter(initialLocation: SplashScreen.routeUrl, routes: [
   GoRoute(
       path: WritePostScreen.routeUrl,
       name: WritePostScreen.routeName,
-      builder: (context, state) => const WritePostScreen()),
+      builder: (context, state) {
+        final userId = state.extra as Map<String, int>;
+        return WritePostScreen(userId: userId["userId"]!);
+      }),
   GoRoute(
       path: DetailPostScreen.routeUrl,
       name: DetailPostScreen.routeName,
       builder: (context, state) {
         final postId = state.extra as Map<String, int>;
-        return DetailPostScreen(postId: postId["postId"]!);
+        final userId = state.extra as Map<String, int>;
+        return DetailPostScreen(postId: postId["postId"]!, userId: userId["userId"]!);
       }),
   GoRoute(
       path: HomeItemScreen.routeUrl,
@@ -93,6 +107,7 @@ final router = GoRouter(initialLocation: SplashScreen.routeUrl, routes: [
             writer: post["writer"]!,
             title: post["title"]!,
             content: post["content"],
+            profileUrl: post["profileUrl"]!,
             date: post["date"]!);
       }),
   GoRoute(
@@ -118,5 +133,15 @@ final router = GoRouter(initialLocation: SplashScreen.routeUrl, routes: [
     path: ManagementScreen.routeUrl,
     name: ManagementScreen.routeName,
     builder: (context, state) => const ManagementScreen(),
-  )
+  ),
+
+  GoRoute(path: DetailChattingScreen.routeUrl,
+  name: DetailChattingScreen.routeName,
+  builder: (context, state){
+    final extra = state.extra as Map<String, dynamic>;
+    final userId = extra["userId"] as int;
+    final senderId = extra["senderId"] as int;
+    final otherId = extra["otherId"] as int;
+    return DetailChattingScreen(userId: userId, senderId: senderId, otherId: otherId);
+  })
 ]);

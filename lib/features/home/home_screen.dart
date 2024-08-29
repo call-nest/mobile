@@ -41,11 +41,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       'userId': data.userId.toString(),
                       'title': data.title,
                       'content': data.description,
-                      'fileUrl':
-                          "https://s3.ap-northeast-1.wasabisys.com/collnest/2/Y2meta.app-%ED%98%9C%EC%95%88%EC%A0%B8%EC%8A%A4%20%EC%B2%B4%EC%9D%B8%ED%88%AC%EA%B2%8C%EB%8D%94%20%EC%9D%B4%EC%A0%9C%20%E3%84%B1%E3%85%90%EC%9E%98%ED%95%A9%EB%8B%88%EB%8B%A4%E3%84%B7%E3%84%B7%28%E2%80%BB30%EB%B6%84%20%EC%88%9C%EC%82%AD%29-%28720p60%29.mp4?AWSAccessKeyId=ZZDV4EWRWG8PEDFGNKXH&Expires=1723825905&Signature=THAn%2BG0SBpxLcIy226UcXi14ZnM%3D",
+                      'fileUrl': data.fileUrl,
                       'createdAt': data.createdAt.toString().substring(0, 10),
                       'profile':
-                          "https://s3.ap-northeast-1.wasabisys.com/collnest/profile/13/image-2.png?AWSAccessKeyId=ZZDV4EWRWG8PEDFGNKXH&Expires=1723825863&Signature=Ayp21F1%2FikIyEywPiSXboVX%2BI%2F0%3D"
+                          "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
                     });
                   },
                   child: HomeItemScreen(
@@ -53,6 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     writer: data.userId.toString(),
                     date: data.createdAt.toString().substring(0, 10),
                     content: data.description,
+                    profileUrl: data.fileUrl,
                   ),
                 );
               });

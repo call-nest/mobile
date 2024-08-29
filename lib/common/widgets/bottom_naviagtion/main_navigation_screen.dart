@@ -5,6 +5,7 @@ import 'package:defaults/features/profile/user_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../features/home/home_screen.dart';
 
@@ -30,6 +31,20 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   ];
 
   late int _selectedIndex = _tabs.indexOf(widget.tab);
+  int? _userId;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserId();
+  }
+
+  Future<void> _loadUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _userId = prefs.getInt('userId');  // userId를 SharedPreferences에서 가져옴
+    });
+  }
 
   void _onTap(int idx) {
     context.go("/${_tabs[idx]}");
@@ -62,7 +77,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           Offstage(offstage: _selectedIndex != 3, child: const CollaborationScreen()),
           Offstage(
             offstage: _selectedIndex != 4,
-            child: const UserProfileScreen(),
+            child: _userId != null
+                ? UserProfileScreen(userId: _userId!)  // userId 전달
+                : Center(child: CircularProgressIndicator()),  // userId를 가져오기 전에는 로딩 표시
           ),
         ],
       ),

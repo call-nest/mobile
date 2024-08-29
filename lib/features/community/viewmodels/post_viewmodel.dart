@@ -56,4 +56,13 @@ class PostViewModel extends ChangeNotifier {
       throw Exception('Failed to post collaboration, status code: ${e}');
     }
   }
+
+  Future<void> writePost(int userId, String title, String content, String category) async{
+    try{
+      await postRepository.writePost(userId, title, content, category);
+      notifyListeners();
+    }catch (e){
+      throw Exception('Failed to write post, status code: ${e}');
+    }
+  }
 }

@@ -8,12 +8,14 @@ class HomeItemScreen extends StatefulWidget {
   final String title;
   final String? content;
   final String date;
+  final String profileUrl;
 
   const HomeItemScreen(
       {super.key,
       required this.writer,
       required this.title,
       required this.content,
+      required this.profileUrl,
       required this.date});
 
   @override
@@ -28,12 +30,12 @@ class _HomeItemScreenState extends State<HomeItemScreen> {
         margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         child: ListTile(
           title: Text(widget.title),
-          subtitle: Text(widget.content ?? '', maxLines: 1, overflow: TextOverflow.ellipsis),
+          subtitle: Text(widget.content ?? '',
+              maxLines: 1, overflow: TextOverflow.ellipsis),
           trailing: Text(widget.date),
           leading: CircleAvatar(
             backgroundImage: NetworkImage(
-                'https://s3.ap-northeast-1.wasabisys.com/collnest/profile/13/image-2.png?AWSAccessKeyId=ZZDV4EWRWG8PEDFGNKXH&Expires=1723825863&Signature=Ayp21F1%2FikIyEywPiSXboVX%2BI%2F0%3D'
-            ),
+                "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"),
           ),
         ),
       ),

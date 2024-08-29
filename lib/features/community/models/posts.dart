@@ -41,6 +41,7 @@ class Datum {
   String createdAt;
   String? updatedAt;
   bool isDeleted;
+  String category;
 
   Datum({
     required this.id,
@@ -51,6 +52,7 @@ class Datum {
     required this.createdAt,
     required this.updatedAt,
     required this.isDeleted,
+    required this.category,
   });
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
@@ -62,6 +64,7 @@ class Datum {
     createdAt: json["created_at"],
     updatedAt: json["updated_at"],
     isDeleted: json["is_deleted"],
+    category: json["category"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -73,6 +76,7 @@ class Datum {
     "created_at": createdAt,
     "updated_at": updatedAt,
     "is_deleted": isDeleted,
+    "category": category,
   };
 }
 

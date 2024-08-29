@@ -1,6 +1,7 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 
 class DetailHomeScreen extends StatefulWidget {
@@ -33,10 +34,20 @@ class _DetailHomeScreenState extends State<DetailHomeScreen> {
   late ChewieController _chewieController;
   late Future<void> _initializeVideoPlayerFuture;
 
+  late int userId;
+
   @override
   void initState() {
     super.initState();
     _initializeVideoPlayerFuture = _initializeVideoPlayer();
+    initUserId();
+  }
+
+  Future<void> initUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userId = prefs.getInt('userId')!;
+    });
   }
 
   Future<void> _initializeVideoPlayer() async {
@@ -84,34 +95,16 @@ class _DetailHomeScreenState extends State<DetailHomeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 30,
-                          backgroundImage: NetworkImage(widget.profile),
-                        ),
-                        const SizedBox(width: 16),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              widget.userId,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              widget.createdAt,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                    ListTile(
+                      leading: CircleAvatar(
+                        backgroundImage: NetworkImage(widget.profile),
+                      ),
+                      title: Text(widget.userId),
+                      subtitle: Text(widget.createdAt),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.more_vert),
+                        onPressed: () {},
+                      ),
                     ),
                     const SizedBox(height: 16),
                     FutureBuilder(
@@ -121,7 +114,7 @@ class _DetailHomeScreenState extends State<DetailHomeScreen> {
                           return AspectRatio(
                             aspectRatio: _controller.value.aspectRatio,
                             child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(10),
                                 child: Chewie(controller: _chewieController)),
                           );
                         } else {

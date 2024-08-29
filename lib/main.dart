@@ -14,6 +14,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 import 'common/constants.dart';
@@ -21,6 +22,9 @@ import 'features/authentication/repository/auth_repository.dart';
 import 'features/authentication/viewmodel/auth_viewmodel.dart';
 
 import 'package:http/http.dart' as http;
+
+import 'features/chatting/repository/chatting_repository.dart';
+import 'features/chatting/viewmodels/chatting_viewmodel.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,22 +35,23 @@ Future<void> main() async {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
   await messaging.requestPermission();
 
-  messaging.getToken().then((String? token){
+  messaging.getToken().then((String? token) {
     assert(token != null);
     print('Push Messaging token: $token');
   });
 
-  FirebaseMessaging.onMessage.listen((RemoteMessage message){
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     print("Received Message: ${message.notification?.title}");
   });
 
   runApp(const MyApp());
 }
 
-Future<void> sendTokentoServer(String token) async{
+Future<void> sendTokentoServer(String token) async {
   final url = Uri.parse("${Constants.baseUrl}users/token");
   final response = await http.post(
-    url, headers: <String, String>{
+    url,
+    headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },
     body: jsonEncode(<String, String>{
@@ -54,7 +59,7 @@ Future<void> sendTokentoServer(String token) async{
     }),
   );
 
-  if(response.statusCode == 200){
+  if (response.statusCode == 200) {
     print('Token sent to server');
   } else {
     throw Exception('Failed to send token to server');
@@ -110,7 +115,10 @@ class MyApp extends StatelessWidget {
                 FileViewModel(fileRepository: FileRepository())),
         ChangeNotifierProvider(
             create: (context) =>
-                ManageViewModel(manageRepository: ManageRepository()))
+                ManageViewModel(manageRepository: ManageRepository())),
+        ChangeNotifierProvider(
+            create: (context) =>
+                ChattingViewModel(chattingRepository: ChattingRepository()))
       ],
       child: MaterialApp.router(
         routerConfig: router,

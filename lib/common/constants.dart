@@ -1,6 +1,6 @@
 class Constants{
   static const String appName = 'Flutter Ecommerce App';
-  static const String baseUrl = "http://192.168.123.104:8000/";
+  static const String baseUrl = "http://192.168.123.105:8000/";
 
   static const interests = [
     "작곡",

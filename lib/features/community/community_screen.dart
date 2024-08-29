@@ -1,3 +1,4 @@
+import 'package:defaults/features/chatting/chatting_screen.dart';
 import 'package:defaults/features/community/detail_post_screen.dart';
 import 'package:defaults/features/community/models/posts.dart';
 import 'package:defaults/features/community/search_screen.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CommunityScreen extends StatefulWidget {
   const CommunityScreen({super.key});
@@ -25,12 +27,22 @@ class _CommunityScreenState extends State<CommunityScreen> {
   bool isLoading = false;
   int pageIndex = 1;
 
+  late int userId;
+
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
     viewModels = Provider.of<PostViewModel>(context, listen: false);
     viewModels.getPosts(pageIndex);
+
+    _initUserId();
+  }
+
+  Future<void> _initUserId() async{
+    final prefs = await SharedPreferences.getInstance();
+    userId = prefs.getInt("userId")!;
+
   }
 
   void _onScroll() {
@@ -53,7 +65,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
   }
 
   void _goToWritePost() {
-    context.push(WritePostScreen.routeUrl);
+    context.push(WritePostScreen.routeUrl, extra: {"userId": userId});
   }
 
   @override
@@ -86,7 +98,9 @@ class _CommunityScreenState extends State<CommunityScreen> {
             icon: FaIcon(FontAwesomeIcons.magnifyingGlass),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              context.push(ChattingScreen.routeUrl);
+            },
             icon: FaIcon(FontAwesomeIcons.paperPlane),
           ),
         ],
@@ -109,7 +123,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                 return InkWell(
                   onTap: () {
                     context.push(DetailPostScreen.routeUrl,
-                        extra: {"postId": post.id});
+                        extra: {"postId": post.id, "userId" : userId});
                   },
                   child: PostsWidget(
                     title: post.title,
