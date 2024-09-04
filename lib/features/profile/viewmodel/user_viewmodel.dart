@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:defaults/features/profile/models/user_info.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -10,13 +12,17 @@ class UserViewModel extends ChangeNotifier{
 
   UserViewModel({required this.userRepository});
 
-  late UserPosts? _userPosts;
+  UserPosts? _userPosts;
   UserPosts? get userPosts => _userPosts;
 
-  Future<UserInfo> getUserInfo(int userId) async{
+  UserInfo? _userInfo;
+  UserInfo? get userInfo => _userInfo;
+
+  Future<void> getUserInfo(int userId) async{
     try {
-      final userInfo = await userRepository.getUser(userId);
-      return userInfo;
+      final response = await userRepository.getUser(userId);
+      _userInfo = response;
+      notifyListeners();
     } catch (e) {
       throw Exception('Failed to get user info, status code: $e');
     }
@@ -53,4 +59,13 @@ class UserViewModel extends ChangeNotifier{
     }
   }
 
+  Future<void> updateUserInfo(int userId, File profileImg, String nickname, String introduce, List<String> interests) async{
+    try{
+      final response = await userRepository.updateUserInfo(userId, nickname, profileImg, introduce, interests);
+      _userInfo = response;
+      notifyListeners();
+    }catch(e){
+      throw Exception('Failed to get user posts, status code: $e');
+    }
+  }
 }

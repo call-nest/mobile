@@ -51,6 +51,7 @@ class User {
   String? profile;
   String? introduce;
   int role;
+  List<String> interests;
 
   User({
     required this.id,
@@ -59,6 +60,7 @@ class User {
     this.profile = "",
     this.introduce = "",
     required this.role,
+    required this.interests,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => User(
@@ -68,6 +70,7 @@ class User {
     profile: json["profile_img"],
     introduce: json["introduce"],
     role: json["role"],
+    interests: List<String>.from(json["interests"].map((x) => x)),
   );
 
   Map<String, dynamic> toJson() => {
@@ -77,5 +80,6 @@ class User {
     "profile_img": profile,
     "introduce": introduce,
     "role": role,
+    "interests": List<dynamic>.from(interests.map((x) => x)),
   };
 }

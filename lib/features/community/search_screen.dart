@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class SearchScreen extends StatefulWidget {
   static const String routeUrl = '/search';
   static const routeName = "search";
+
   const SearchScreen({super.key});
 
   @override
@@ -10,7 +12,6 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-
   TextEditingController _searchController = TextEditingController();
 
   @override
@@ -21,8 +22,25 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-
+    return SafeArea(
+      child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(100),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SearchBar(
+              hintText: "검색어를 입력하세요.",
+              elevation: WidgetStatePropertyAll(2.0),
+              trailing: [
+                IconButton(
+                  icon: const FaIcon(FontAwesomeIcons.magnifyingGlass),
+                  onPressed: () {},
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

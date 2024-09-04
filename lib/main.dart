@@ -17,6 +17,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
+import 'PushNotification.dart';
 import 'common/constants.dart';
 import 'features/authentication/repository/auth_repository.dart';
 import 'features/authentication/viewmodel/auth_viewmodel.dart';
@@ -26,23 +27,62 @@ import 'package:http/http.dart' as http;
 import 'features/chatting/repository/chatting_repository.dart';
 import 'features/chatting/viewmodels/chatting_viewmodel.dart';
 
+final navigatorKey = GlobalKey<NavigatorState>();
+
+// 반드시 main 함수 외부에 작성 (= 최상위 수준 함수여야 함)
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  if (message.notification != null)
+    print('Handling a background message ${message.messageId}');
+}
+
+Future<void> setupInteractedMessage() async {
+  // 앱이 종료된 상태에서 열릴 때 getInitialMessage 호출
+  RemoteMessage? initialMessage =
+      await FirebaseMessaging.instance.getInitialMessage();
+
+  if (initialMessage != null) {
+    _handleMessage(initialMessage);
+  }
+
+  // 앱이 백그라운드 상태일 때, 푸시 알림을 탭할 때 RemoteMessage cjfl
+  FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
+}
+
+// FCM 에서 전송한 data 처리, 알림 처리
+void _handleMessage(RemoteMessage message) {
+  Future.delayed(const Duration(seconds: 1), () {
+    navigatorKey.currentState!.pushNamed("/message", arguments: message);
+  });
+}
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  // initializeNotification();
+
+  PushNotification.init();
+  PushNotification.localNotiInit();
 
   // ios 권한 요청
   FirebaseMessaging messaging = FirebaseMessaging.instance;
   await messaging.requestPermission();
 
-  messaging.getToken().then((String? token) {
-    assert(token != null);
-    print('Push Messaging token: $token');
-  });
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    print("Received Message: ${message.notification?.title}");
+    String payload = jsonEncode(message.data);
+    print("Got a message in foreground");
+    if (message.notification != null) {
+      PushNotification.showSimpleNotification(
+          title: message.notification!.title!,
+          body: message.notification!.body!,
+          payload: payload);
+    }
   });
+
+  final prefs = Constants();
+
+  await prefs.init();
 
   runApp(const MyApp());
 }
@@ -66,13 +106,9 @@ Future<void> sendTokentoServer(String token) async {
   }
 }
 
-Future<void> _firebaseMessagingBarckgroundHandler(RemoteMessage message) async {
-  print('Handling a background message: ${message.messageId}');
-}
-
 void initializeNotification() async {
   // 알림 초기화
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBarckgroundHandler);
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   await flutterLocalNotificationsPlugin

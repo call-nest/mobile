@@ -18,6 +18,7 @@ class DetailPosts {
   String createdAt;
   dynamic updatedAt;
   bool isDeleted;
+  String? category;
 
   DetailPosts({
     required this.id,
@@ -29,6 +30,7 @@ class DetailPosts {
     required this.createdAt,
     required this.updatedAt,
     required this.isDeleted,
+    required this.category,
   });
 
   factory DetailPosts.fromJson(Map<String, dynamic> json) => DetailPosts(
@@ -41,6 +43,7 @@ class DetailPosts {
     createdAt: json["created_at"],
     updatedAt: json["updated_at"],
     isDeleted: json["is_deleted"],
+    category: json["category"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -53,5 +56,6 @@ class DetailPosts {
     "created_at": createdAt,
     "updated_at": updatedAt,
     "is_deleted": isDeleted,
+    "category": category,
   };
 }

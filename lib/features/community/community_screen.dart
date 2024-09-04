@@ -12,6 +12,8 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../common/constants.dart';
+
 class CommunityScreen extends StatefulWidget {
   const CommunityScreen({super.key});
 
@@ -23,7 +25,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
   ScrollController _scrollController = ScrollController();
   late PostViewModel viewModels;
 
-  String selectedFilter = "All";
+  String? selectedFilter;
   bool isLoading = false;
   int pageIndex = 1;
 
@@ -47,7 +49,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
 
   void _onScroll() {
     if (_scrollController.position.pixels ==
-            _scrollController.position.maxScrollExtent &&
+            _scrollController.position.minScrollExtent &&
         !isLoading) {
       _loadMoreData();
     }
@@ -81,7 +83,8 @@ class _CommunityScreenState extends State<CommunityScreen> {
         title: const Text("Community"),
         actions: [
           DropdownButton(
-            items: ["All", "Following", "Popular"]
+            hint: const Text("Filter"),
+            items: Constants.interests
                 .map((e) => DropdownMenuItem(child: Text(e), value: e))
                 .toList(),
             value: selectedFilter,
@@ -116,6 +119,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
           }
           return ListView.builder(
             controller: _scrollController,
+            reverse: true,
             itemCount: viewModel.posts.length + (isLoading ? 1 : 0),
             itemBuilder: (context, index) {
               if (index < viewModel.posts.length) {

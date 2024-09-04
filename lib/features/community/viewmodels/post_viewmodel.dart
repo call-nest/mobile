@@ -65,4 +65,26 @@ class PostViewModel extends ChangeNotifier {
       throw Exception('Failed to write post, status code: ${e}');
     }
   }
+
+  Future<Map<String, dynamic>> deletePost(int postId) async{
+    try{
+      final response = await postRepository.deletePost(postId);
+      _posts.removeWhere((element) => element.id == postId);
+      notifyListeners();
+      return response;
+    }catch (e){
+      throw Exception('Failed to delete post, status code: ${e}');
+    }
+  }
+
+  Future<DetailPosts> modifyPost(int postId, String title, String content, int userId, String category) async{
+    try{
+      final response = await postRepository.modifyPost(postId, title, content, category, userId);
+      _detailPosts = response;
+      notifyListeners();
+      return response;
+    }catch (e){
+      throw Exception('Failed to modify post, status code: ${e}');
+    }
+  }
 }

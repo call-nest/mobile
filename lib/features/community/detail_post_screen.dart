@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../profile/user_profile_screen.dart';
+import 'models/detail_posts.dart';
+import 'modify_screen.dart';
 
 class DetailPostScreen extends StatefulWidget {
   static const String routeUrl = '/detailPost';
@@ -21,17 +23,30 @@ class DetailPostScreen extends StatefulWidget {
 }
 
 class _DetailPostScreenState extends State<DetailPostScreen> {
+
+  late PostViewModel viewModel;
+
   @override
   void initState() {
     super.initState();
 
-    final viewModel = Provider.of<PostViewModel>(context, listen: false);
+    viewModel = Provider.of<PostViewModel>(context, listen: false);
     viewModel.getDetailPosts(widget.postId);
     viewModel.postCollaboration(widget.postId, widget.userId);
   }
 
   void _goToProfileScreen(BuildContext context, int userId) {
     context.push("/userProfile/$userId", extra: userId);
+  }
+
+  void _deletePost(int postId){
+    viewModel.deletePost(postId);
+    Navigator.of(context).pop();
+    Navigator.of(context).pop();
+  }
+
+  void _modifyPost(DetailPosts post){
+    context.push(ModifyScreen.routeUrl, extra: post);
   }
 
   @override
@@ -80,13 +95,13 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
                                       ListTile(
                                         title: const Text("수정하기"),
                                         onTap: () {
-                                          // 수정 로직
+                                          _modifyPost(post);
                                         },
                                       ),
                                       ListTile(
                                         title: const Text("삭제하기"),
                                         onTap: () {
-                                          // 삭제 로직
+                                          _deletePost(post.id);
                                         },
                                       ),
                                     ],
@@ -136,7 +151,7 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
                                     TextButton(
                                       onPressed: () {
                                         viewModel.postCollaboration(
-                                            widget.postId, widget.userId!);
+                                            widget.postId, widget.userId);
                                         Navigator.pop(context);
                                       },
                                       child: const Text("확인"),

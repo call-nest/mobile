@@ -60,5 +60,6 @@
     <key>FirebaseAppDelegateProxyEnabled</key>
     <false/>
 
+    FirebaseMessagingAutoInitEnabled = NO
 </dict>
 </plist>

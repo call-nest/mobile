@@ -95,4 +95,40 @@ class PostRepository {
       throw Exception('Failed to load posts, status code: ${e}');
     }
   }
+
+  Future<Map<String, dynamic>> deletePost(int postId) async {
+    final url = "${Constants.baseUrl}posts/$postId";
+    try {
+      final response = await _dio.delete(url);
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        throw Exception(
+            'Failed to delete post, status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to delete post, status code: ${e}');
+    }
+  }
+
+  Future<DetailPosts> modifyPost(
+      int postId, String title, String content, String category, int writer) async {
+    final url = "${Constants.baseUrl}posts/$postId";
+    try {
+      final response = await _dio.patch(url,
+          data: json.encode(
+              {"title": title, "content": content, "category": category, "writer": writer}),
+          options: Options(headers: {"Content-Type": "application/json"}));
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonResponse = response.data;
+        final DetailPosts modifyPost = DetailPosts.fromJson(jsonResponse);
+        return modifyPost;
+      } else {
+        throw Exception(
+            'Failed to modify post, status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to modify post, status code: ${e}');
+    }
+  }
 }
