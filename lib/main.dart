@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:defaults/features/collaboration/viewmodel/collaboration_viewmodel.dart';
 import 'package:defaults/features/community/repository/post_repository.dart';
 import 'package:defaults/features/community/viewmodels/post_viewmodel.dart';
 import 'package:defaults/features/home/repository/file_repository.dart';
@@ -26,6 +27,7 @@ import 'package:http/http.dart' as http;
 
 import 'features/chatting/repository/chatting_repository.dart';
 import 'features/chatting/viewmodels/chatting_viewmodel.dart';
+import 'features/collaboration/repository/collaboration_repository.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -154,7 +156,10 @@ class MyApp extends StatelessWidget {
                 ManageViewModel(manageRepository: ManageRepository())),
         ChangeNotifierProvider(
             create: (context) =>
-                ChattingViewModel(chattingRepository: ChattingRepository()))
+                ChattingViewModel(chattingRepository: ChattingRepository())),
+        ChangeNotifierProvider(
+            create: (context) => CollaborationViewModel(
+                collaborationRepository: CollaborationRepository())),
       ],
       child: MaterialApp.router(
         routerConfig: router,

@@ -49,12 +49,12 @@ class PostRepository {
     }
   }
 
-  Future<Collaboration> postCollaboration(int postId, int userId) async {
+  Future<Collaboration> postCollaboration(int postId, int requestUserId, int receiveUserId) async {
     final url = "${Constants.baseUrl}collaborations/post";
     try {
       final response = await _dio.post(
         url,
-        data: json.encode({"post_id": postId, "user_id": userId}),
+        data: json.encode({"post_id": postId, "request_user_id": requestUserId, "receive_user_id": receiveUserId}),
         options: Options(headers: {"Content-Type": "application/json"}),
       );
       if (response.statusCode == 200) {
@@ -68,6 +68,26 @@ class PostRepository {
       }
     } catch (e) {
       throw Exception('Failed to post collaboration, status code: ${e}');
+    }
+  }
+
+  Future<Collaboration?> getCollaboration(int postId) async{
+    final url = "${Constants.baseUrl}collaborations/$postId/collaborations";
+    try {
+      final response = await _dio.get(url);
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonResponse = response.data;
+        if(jsonResponse['data'].isEmpty)
+          return null;
+
+        final Collaboration collaboration = Collaboration.fromJson(jsonResponse);
+        return collaboration;
+      } else {
+        throw Exception(
+            'Failed to get collaboration, status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to get collaboration, status code: ${e}');
     }
   }
 
@@ -111,13 +131,17 @@ class PostRepository {
     }
   }
 
-  Future<DetailPosts> modifyPost(
-      int postId, String title, String content, String category, int writer) async {
+  Future<DetailPosts> modifyPost(int postId, String title, String content,
+      String category, int writer) async {
     final url = "${Constants.baseUrl}posts/$postId";
     try {
       final response = await _dio.patch(url,
-          data: json.encode(
-              {"title": title, "content": content, "category": category, "writer": writer}),
+          data: json.encode({
+            "title": title,
+            "content": content,
+            "category": category,
+            "writer": writer
+          }),
           options: Options(headers: {"Content-Type": "application/json"}));
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonResponse = response.data;
@@ -129,6 +153,22 @@ class PostRepository {
       }
     } catch (e) {
       throw Exception('Failed to modify post, status code: ${e}');
+    }
+  }
+
+  Future<String> changeStatePost(int postId) async {
+    final url = "${Constants.baseUrl}posts/$postId/recruit";
+    try {
+      final response =
+          await _dio.patch(url, queryParameters: {"post_id": postId});
+      if (response.statusCode == 200) {
+        return "Success";
+      } else {
+        throw Exception(
+            'Failed to change state post, status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to change state post, status code: ${e}');
     }
   }
 }

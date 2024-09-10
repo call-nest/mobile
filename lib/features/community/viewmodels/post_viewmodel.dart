@@ -14,8 +14,8 @@ class PostViewModel extends ChangeNotifier {
   List<Datum> _posts = [];
   List<Datum> get posts => _posts;
 
-  late DetailPosts _detailPosts;
-  DetailPosts get detailPosts => _detailPosts;
+  DetailPosts? _detailPosts;
+  DetailPosts? get detailPosts => _detailPosts;
 
   bool _hasMore = true;
   bool get hasMore => _hasMore;
@@ -23,11 +23,17 @@ class PostViewModel extends ChangeNotifier {
   Collaboration? _collaboration;
   Collaboration? get collaboration => _collaboration;
 
-  Future<void> getPosts(int page) async {
+  Future<void> getPosts(int page, String category) async {
     try{
       final response = await postRepository.getPosts(page);
       if(response.data.isNotEmpty){
-        _posts.addAll(response.data);
+        if(category == '전체')
+          _posts.addAll(response.data);
+        else{
+          _posts.clear();
+          final filteredData = response.data.where((element) => element.category == category).toList();
+          _posts.addAll(filteredData);
+        }
         _hasMore = true;
       } else {
         _hasMore = false;
@@ -48,12 +54,21 @@ class PostViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> postCollaboration(int postId, int userId) async{
+  Future<void> postCollaboration(int postId, int requestUserId, int receiveUserId) async{
     try{
-      _collaboration = await postRepository.postCollaboration(postId, userId);
+      _collaboration = await postRepository.postCollaboration(postId, requestUserId, receiveUserId);
       notifyListeners();
     }catch (e){
       throw Exception('Failed to post collaboration, status code: ${e}');
+    }
+  }
+
+  Future<void> getCollaboration(int postId)async{
+    try{
+      _collaboration = await postRepository.getCollaboration(postId);
+      notifyListeners();
+    }catch (e){
+      throw Exception('Failed to get collaboration, status code: ${e}');
     }
   }
 

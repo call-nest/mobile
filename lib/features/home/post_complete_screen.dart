@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 const categories = ["영상", "음악", "디자인", "사진"];
 
@@ -25,9 +26,9 @@ class _PostCompleteScreenState extends State<PostCompleteScreen> {
   TextEditingController _youtubeUrlController = TextEditingController();
 
   String fileName = "";
-  String category = "";
+  String? category;
 
-  int userId = 2;
+  late int userId;
 
   late File file;
   late final FileViewModel viewModel;
@@ -36,6 +37,13 @@ class _PostCompleteScreenState extends State<PostCompleteScreen> {
   void initState() {
     super.initState();
     viewModel = Provider.of<FileViewModel>(context, listen: false);
+
+    _getUserId();
+  }
+
+  Future<void> _getUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    userId = prefs.getInt("userId")!;
   }
 
   @override
@@ -59,7 +67,8 @@ class _PostCompleteScreenState extends State<PostCompleteScreen> {
   }
 
   Future<void> _uploadFile() async {
-    await viewModel.uploadFile(_titleController.text, _contentController.text, userId, file);
+    await viewModel.uploadFile(
+        _titleController.text, _contentController.text, userId, file);
     context.pop();
   }
 
@@ -130,12 +139,16 @@ class _PostCompleteScreenState extends State<PostCompleteScreen> {
               ),
               Spacer(),
               DropdownButton(
-                items: categories.map((String category) {
+                items: categories.map((String e) {
                   return DropdownMenuItem(
-                    value: category,
-                    child: Text(category),
+                    value: e,
+                    child: Text(
+                      e,
+                      style: TextStyle(color: Colors.black),
+                    ),
                   );
                 }).toList(),
+                value: category,
                 onChanged: (value) {
                   setState(() {
                     category = value.toString();

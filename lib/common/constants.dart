@@ -20,6 +20,23 @@ class Constants {
     "기획"
   ];
 
+  static const categories = [
+    "전체",
+    "작곡",
+    "작사",
+    "보컬",
+    "작가",
+    "연기",
+    "연출",
+    "촬영",
+    "편집",
+    "유튜브 크리에이터",
+    "프로그래밍",
+    "디자인",
+    "그래픽 디자인",
+    "기획"
+  ];
+
   static final Constants _instance = Constants._internal();
 
   factory Constants() {

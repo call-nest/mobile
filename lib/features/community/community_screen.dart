@@ -25,7 +25,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
   ScrollController _scrollController = ScrollController();
   late PostViewModel viewModels;
 
-  String? selectedFilter;
+  String selectedFilter = "전체";
   bool isLoading = false;
   int pageIndex = 1;
 
@@ -36,7 +36,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
     super.initState();
     _scrollController.addListener(_onScroll);
     viewModels = Provider.of<PostViewModel>(context, listen: false);
-    viewModels.getPosts(pageIndex);
+    viewModels.getPosts(pageIndex, '');
 
     _initUserId();
   }
@@ -60,7 +60,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
       isLoading = true;
     });
     pageIndex++;
-    await viewModels.getPosts(pageIndex);
+    await viewModels.getPosts(pageIndex, '');
     setState(() {
       isLoading = false;
     });
@@ -83,13 +83,13 @@ class _CommunityScreenState extends State<CommunityScreen> {
         title: const Text("Community"),
         actions: [
           DropdownButton(
-            hint: const Text("Filter"),
-            items: Constants.interests
+            items: Constants.categories
                 .map((e) => DropdownMenuItem(child: Text(e), value: e))
                 .toList(),
             value: selectedFilter,
             onChanged: (value) {
               setState(() {
+                viewModels.getPosts(pageIndex, value!);
                 selectedFilter = value.toString();
               });
             },
