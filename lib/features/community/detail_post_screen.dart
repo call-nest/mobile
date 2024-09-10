@@ -71,6 +71,10 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
           final post = viewModel.detailPosts;
           final collaboration = viewModel.collaboration;
 
+          final isCollaboration = collaboration.any((e) =>
+            e.receiveUserId == widget.userId
+          );
+
           return SingleChildScrollView(
             padding: const EdgeInsets.all(8.0),
             child: Card(
@@ -149,39 +153,65 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
                     children: [
                       TextButton(
                         onPressed: () {
-                          // if (collaborationStatus == 1) {
-                          //   showDialog(
-                          //     context: context,
-                          //     builder: (context) {
-                          //       return AlertDialog(
-                          //         title: const Text("협업 신청 취소"),
-                          //         content: const Text("협업 신청을 취소하시겠습니까?"),
-                          //         actions: [
-                          //           TextButton(
-                          //             onPressed: () {
-                          //               Navigator.pop(context);
-                          //             },
-                          //             child: const Text("취소"),
-                          //           ),
-                          //           TextButton(
-                          //             onPressed: () {
-                          //               // viewModel.postCollaboration(
-                          //               //     widget.postId, widget.userId);
-                          //               Navigator.pop(context);
-                          //             },
-                          //             child: const Text("확인"),
-                          //           ),
-                          //         ],
-                          //       );
-                          //     },
-                          //   );
-                          // } else {
-                          //   // viewModel.postCollaboration(
-                          //   //     widget.postId, widget.userId);
-                          // }
+                          if (isCollaboration) {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: const Text("협업 신청 취소"),
+                                  content: const Text("협업 신청을 취소하시겠습니까?"),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text("취소"),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        // viewModel.postCollaboration(
+                                        //     widget.postId, widget.userId);
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text("확인"),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: const Text("협업 신청"),
+                                  content: const Text("협업 신청을 하시겠습니까?"),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text("취소"),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        // viewModel.postCollaboration(
+                                        //     widget.postId, widget.userId);
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text("확인"),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          }
                         },
                         child: Text(
-                          "협업 신청하기",
+                          isCollaboration ? "협업 신청 취소" : "협업 신청",
+                          style: TextStyle(
+                            color: isCollaboration ? Colors.red : Colors.blue,
+                          ),
                         ),
                       ),
                       IconButton(

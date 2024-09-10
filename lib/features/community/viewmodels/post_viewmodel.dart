@@ -20,8 +20,8 @@ class PostViewModel extends ChangeNotifier {
   bool _hasMore = true;
   bool get hasMore => _hasMore;
 
-  Collaboration? _collaboration;
-  Collaboration? get collaboration => _collaboration;
+  List<CollaborationClass> _collaboration = [];
+  List<CollaborationClass> get collaboration => _collaboration;
 
   Future<void> getPosts(int page, String category) async {
     try{
@@ -54,14 +54,14 @@ class PostViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> postCollaboration(int postId, int requestUserId, int receiveUserId) async{
-    try{
-      _collaboration = await postRepository.postCollaboration(postId, requestUserId, receiveUserId);
-      notifyListeners();
-    }catch (e){
-      throw Exception('Failed to post collaboration, status code: ${e}');
-    }
-  }
+  // Future<void> postCollaboration(int postId, int requestUserId, int receiveUserId) async{
+  //   try{
+  //     _collaboration = await postRepository.postCollaboration(postId, requestUserId, receiveUserId);
+  //     notifyListeners();
+  //   }catch (e){
+  //     throw Exception('Failed to post collaboration, status code: ${e}');
+  //   }
+  // }
 
   Future<void> getCollaboration(int postId)async{
     try{

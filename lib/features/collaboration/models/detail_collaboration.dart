@@ -59,47 +59,35 @@ class Datum {
 class Collaboration {
   int requestUserId;
   int postId;
-  bool isAccepted;
-  bool isRejected;
   DateTime createdAt;
   int id;
   int receiveUserId;
-  bool isCanceled;
   int status;
 
   Collaboration({
     required this.requestUserId,
     required this.postId,
-    required this.isAccepted,
-    required this.isRejected,
     required this.createdAt,
     required this.id,
     required this.receiveUserId,
-    required this.isCanceled,
     required this.status,
   });
 
   factory Collaboration.fromJson(Map<String, dynamic> json) => Collaboration(
     requestUserId: json["request_user_id"],
     postId: json["post_id"],
-    isAccepted: json["is_accepted"],
-    isRejected: json["is_rejected"],
     createdAt: DateTime.parse(json["created_at"]),
     id: json["id"],
     receiveUserId: json["receive_user_id"],
-    isCanceled: json["is_canceled"],
     status: json["status"],
   );
 
   Map<String, dynamic> toJson() => {
     "request_user_id": requestUserId,
     "post_id": postId,
-    "is_accepted": isAccepted,
-    "is_rejected": isRejected,
     "created_at": createdAt.toIso8601String(),
     "id": id,
     "receive_user_id": receiveUserId,
-    "is_canceled": isCanceled,
     "status": status,
   };
 }

@@ -71,16 +71,17 @@ class PostRepository {
     }
   }
 
-  Future<Collaboration?> getCollaboration(int postId) async{
+  Future<List<CollaborationClass>> getCollaboration(int postId) async{
     final url = "${Constants.baseUrl}collaborations/$postId/collaborations";
     try {
       final response = await _dio.get(url);
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonResponse = response.data;
-        if(jsonResponse['data'].isEmpty)
-          return null;
 
-        final Collaboration collaboration = Collaboration.fromJson(jsonResponse);
+        List<dynamic> dataList = jsonResponse['data'];
+
+        List<CollaborationClass> collaboration = dataList.map((e) => CollaborationClass.fromJson(e)).toList();
+
         return collaboration;
       } else {
         throw Exception(
